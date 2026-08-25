@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+keys.txt
+*.local
+__pycache__/
+*.pyc
+openrouter_balance.log
+openrouter_balance.jsonl
