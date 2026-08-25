@@ -9,7 +9,8 @@ names requires OPENROUTER_MANAGEMENT_API_KEY.
 
 Examples:
   python3 openrouter_balance_bot.py
-  python3 openrouter_balance_bot.py --watch 60 --alert-below 10
+  python3 openrouter_balance_bot.py --watch 3600
+  pm2 start openrouter_balance.config.js
   python3 openrouter_balance_bot.py --json
 """
 
