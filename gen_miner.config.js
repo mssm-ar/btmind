@@ -27,8 +27,8 @@ function getAutoUpdateParam(autoUpdate) {
   return autoUpdate === 'true' ? '' : '--autoupdate-off';
 }
 
-// Dynamically load environment variables from .env.gen_miner_2 (second miner)
-const envPath = path.resolve(__dirname, '.env.gen_miner_2');
+// Dynamically load environment variables from .env.gen_miner
+const envPath = path.resolve(__dirname, '.env.gen_miner');
 const envConfig = require('dotenv').config({ path: envPath });
 const envFileVars = envConfig.parsed || {};
 
@@ -62,6 +62,10 @@ const config = {
   maxConcurrentTasks: process.env.MINER_MAX_CONCURRENT_TASKS || '5',
   workerThreads: process.env.MINER_WORKER_THREADS || '2',
   taskTimeout: process.env.MINER_TASK_TIMEOUT || '300',
+  // Webhook delivery to validators (mitigates connection_timeout on large uploads)
+  webhookTimeout: process.env.MINER_WEBHOOK_TIMEOUT || '120',
+  webhookMaxRetries: process.env.MINER_WEBHOOK_MAX_RETRIES || '5',
+  webhookRetryDelay: process.env.MINER_WEBHOOK_RETRY_DELAY || '3',
   
   // Force permit setting  
   noForceValidatorPermit: process.env.MINER_NO_FORCE_VALIDATOR_PERMIT === 'true',
@@ -85,7 +89,9 @@ const HF_HOME_RESOLVED = process.env.HF_HOME
   || process.env.HUGGINGFACE_CACHE_DIR
   || path.join(os.homedir(), '.cache', 'huggingface');
 
-// Build dynamic environment from .env.gen_miner_2 file
+// Build dynamic environment from .env.gen_miner file
+// Adding new API keys to .env.gen_miner makes them available
+// to the miner without needing to modify this config file
 const DYNAMIC_ENV = {
   HF_HOME: HF_HOME_RESOLVED,
   HF_HUB_DISABLE_TELEMETRY: '1',
@@ -105,6 +111,9 @@ const minerArgs = [
   '--miner.max-concurrent-tasks', config.maxConcurrentTasks,
   '--miner.worker-threads', config.workerThreads,
   '--miner.task-timeout', config.taskTimeout,
+  '--miner.webhook-timeout', config.webhookTimeout,
+  '--miner.webhook-max-retries', config.webhookMaxRetries,
+  '--miner.webhook-retry-delay', config.webhookRetryDelay,
   logParam,
 ];
 
@@ -124,7 +133,7 @@ if (config.axonExternalIp && config.axonExternalIp !== 'auto') {
 // PM2 Apps configuration
 const apps = [
   {
-    name: 'bitmind-generative-miner-2',
+    name: 'bitmind-generative-miner',
     script: minerScript,
     interpreter: pythonInterpreter,
     args: minerArgs.join(' '),
@@ -144,3 +153,4 @@ const apps = [
 module.exports = {
   apps,
 };
+
