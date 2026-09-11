@@ -1,13 +1,3 @@
-**Caution**
-Follow this istruction.
-Set 
-neurons/generator/services/openrouter_service.py
-neurons/generator/miner.py
-Do with cursor to try see logs of model.
-Do not forget to set this model at neurons/generator/services/openrouter_service.py and env
-google/veo-3.1-lite
-google/gemini-2.5-flash-image
-
 # GAS Subnet (SN34) — Generative Mining Setup Guide
 
 This guide walks through environment installation and running a **generative miner** on

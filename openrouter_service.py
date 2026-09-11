@@ -130,12 +130,16 @@ class OpenRouterService(BaseGenerationService):
         self.video_base_url = VIDEO_API_BASE
         
         # Per-process override so multiple miners can A/B test models (same code).
-        # Example: OPENROUTER_IMAGE_MODEL=google/gemini-2.5-flash-image
+        # Example: OPENROUTER_IMAGE_MODEL=google/gemini-3-pro-image-preview
+        # Example: OPENROUTER_VIDEO_MODEL=bytedance/seedance-2.0-fast
         self.default_model = os.getenv(
-            "OPENROUTER_IMAGE_MODEL", "google/gemini-2.5-flash-image"
+            "OPENROUTER_IMAGE_MODEL", "google/gemini-3-pro-image-preview"
         )
-        self.default_video_model = DEFAULT_VIDEO_MODEL
+        self.default_video_model = canonical_video_model(
+            os.getenv("OPENROUTER_VIDEO_MODEL", DEFAULT_VIDEO_MODEL)
+        )
         bt.logging.info(f"OpenRouter default image model: {self.default_model}")
+        bt.logging.info(f"OpenRouter default video model: {self.default_video_model}")
         
         self.timeout = 60.0
         self.max_retries = 3
